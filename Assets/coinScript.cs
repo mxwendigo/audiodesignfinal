@@ -6,6 +6,10 @@ public class coinScript : MonoBehaviour
 {
 
     public sceneManagerScript sceneScript;
+    [Header("Audio")]
+  
+    public AudioClip coinSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +27,14 @@ public class coinScript : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             sceneScript.addCoin();
+
+            if (coinSound != null)
+            {
+                AudioSource.PlayClipAtPoint(coinSound, transform.position);
+            }
+
             gameObject.SetActive(false);
         }
     }
+
 }

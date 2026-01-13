@@ -14,6 +14,14 @@ public class TopDownScript : MonoBehaviour
     public int health;
     public GameObject gameOverScene;
     public bool gameIsOver;
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip[] footstepClips;
+    private float footstepTimer;
+    public float footstepDelay = 0.4f;
+    public AudioClip swordSwish;
+
+
 
     void Start()
     {
@@ -31,6 +39,18 @@ public class TopDownScript : MonoBehaviour
             moveInput.Normalize();
             rb2d.linearVelocity = moveInput * moveSpeed;
 
+            if (moveInput.magnitude > 0)
+            {
+                footstepTimer -= Time.deltaTime;
+
+                if (footstepTimer <= 0)
+                {
+                    PlayFootstep();
+                    footstepTimer = footstepDelay;
+                }
+            }
+
+
             if (Input.GetKey(KeyCode.D))
             {
                 transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -46,7 +66,10 @@ public class TopDownScript : MonoBehaviour
             if (Input.GetKey(KeyCode.F))
             {
                 playerAnim.Play("playerSword");
-            }
+                PlaySwordSwish();
+                audioSource.PlayOneShot(swordSwish, 0.2f);
+            
+        }
 
         }
 
@@ -78,5 +101,26 @@ public class TopDownScript : MonoBehaviour
     public void restartGame()
     {
         SceneManager.LoadScene(0);
+
     }
+
+    void PlayFootstep()
+    {
+        if (audioSource == null) return;
+        if (footstepClips.Length == 0) return;
+
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(
+            footstepClips[Random.Range(0, footstepClips.Length)]
+        );
+    }
+    void PlaySwordSwish()
+    {
+        if (audioSource == null || swordSwish == null) return;
+
+        audioSource.pitch = Random.Range(0.95f, 1.05f);
+        audioSource.PlayOneShot(swordSwish);
+    }
+
+
 }
